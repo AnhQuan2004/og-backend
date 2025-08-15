@@ -1,0 +1,24 @@
+This is a sample article for testing the CrawlRegistry system.
+
+# Blockchain and Permanent Storage
+
+Blockchain technology provides a decentralized way to store and verify information. 
+When combined with permanent storage solutions like Irys (formerly Arweave), it creates 
+a powerful system for preserving digital content.
+
+## Benefits
+
+1. **Immutability**: Once stored, content cannot be altered
+2. **Permanence**: Content remains accessible indefinitely
+3. **Verifiability**: Content can be cryptographically verified
+4. **Ownership**: Clear record of content ownership through NFTs
+
+## Use Cases
+
+- Archiving important documents
+- Preserving news articles
+- Storing scientific research
+- Creating permanent records of creative works
+
+This sample content will be uploaded to Irys and registered in the CrawlRegistry contract 
+as an NFT, demonstrating the full workflow of the system. 

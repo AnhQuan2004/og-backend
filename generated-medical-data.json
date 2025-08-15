@@ -1,0 +1,36 @@
+{
+    "message": "Test generation successful",
+    "input_text": "Patient presents with severe headache and nausea lasting for 3 days. Blood pressure is elevated at 150/90.",
+    "data": [
+        {
+            "original_text": "Patient presents with severe headache and nausea lasting for 3 days. Blood pressure is elevated at 150/90.",
+            "synthetic_output": {
+                "synthetic_transcription": "An individual reports a three-day history of debilitating cephalalgia and associated emesis. On examination, their blood pressure was recorded at 150/90 mmHg, suggesting a hypertensive component to their current presentation.",
+                "medical_specialty": "Internal Medicine",
+                "explanation": "This transcription details a patient's acute presentation with severe head pain and vomiting, along with a finding of elevated blood pressure, which are common concerns in general internal medicine for diagnostic workup."
+            },
+            "verification_status": "verified",
+            "signature": "b3702c747c3ddbd10b22cb67ebb22fac2154872e63314f9f5afe8115a84a0affe12996be7b6cf4ec0fdd1d2428acd6399e4ccbdd767ea843712bc3f91c006d8e"
+        },
+        {
+            "original_text": "Patient presents with severe headache and nausea lasting for 3 days. Blood pressure is elevated at 150/90.",
+            "synthetic_output": {
+                "synthetic_transcription": "The patient is experiencing persistent, intense cephalic pain and emesis for the third consecutive day. A recent blood pressure measurement revealed a reading of 150/90 mmHg.",
+                "medical_specialty": "Emergency Medicine",
+                "explanation": "This transcription details an acute presentation of symptoms including severe headache, nausea (emesis), and hypertension, which are common reasons for an emergency department visit."
+            },
+            "verification_status": "verified",
+            "signature": "ea78e954c680073c0dcdd2836e3eaf40d8e9d0ac4b4fdc14f8106bd2f8fb890eb7e60322f7a9c015a95e20924af100d98fdf9277515cbfdce268e7fb56f3069b"
+        },
+        {
+            "original_text": "Patient presents with severe headache and nausea lasting for 3 days. Blood pressure is elevated at 150/90.",
+            "synthetic_output": {
+                "synthetic_transcription": "The individual reports a three-day duration of severe cephalalgia accompanied by recurrent emesis. Vital signs reveal an elevated systemic arterial pressure reading of 150 over 90 mmHg.",
+                "medical_specialty": "Internal Medicine",
+                "explanation": "This transcription details a patient's acute symptoms, including headache and nausea, alongside a finding of elevated blood pressure, which is typical for initial assessment in general internal medicine."
+            },
+            "verification_status": "verified",
+            "signature": "8ddab510571efd4596453539c164656660f6aeef704e1154d54531a2ce79dd125c91e2cbaae0488d0dfa31767ce1b74bed31fe3f1a87821e47274ba4981c46fd"
+        }
+    ]
+}

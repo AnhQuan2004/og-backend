@@ -1,0 +1,52 @@
+{
+  "name": "hardhat-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "npx ts-node scripts/deploy.ts",
+    "interact": "npx ts-node scripts/interact.ts",
+    "donate": "npx ts-node scripts/donate.ts",
+    "upload:file": "npx ts-node scripts/upload-irys.ts file",
+    "upload:metadata": "npx ts-node scripts/upload-irys.ts metadata",
+    "get:all-metadata": "npx ts-node scripts/get-all-metadata.ts",
+    "get:bounties": "npx ts-node scripts/get-all-bounties.ts",
+    "mint": "npx ts-node scripts/mint-with-irys.ts",
+    "node": "hardhat node",
+    "api": "ts-node --project tsconfig.api.json api.ts",
+    "build:api": "tsc --project tsconfig.api.json",
+    "start:api": "node dist/api.js",
+    "mint:url": "npx hardhat run scripts/mint-from-url.ts --network saga"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.1.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.0.15",
+    "dotenv": "^17.2.0",
+    "ethers": "^6.15.0",
+    "hardhat": "^2.17.0",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@irys/sdk": "^0.2.11",
+    "@irys/upload": "^0.0.15",
+    "@irys/upload-ethereum": "^0.0.16",
+    "cors": "^2.8.5",
+    "ecdsa": "^0.7.0",
+    "express": "^5.1.0"
+  }
+}

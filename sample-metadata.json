@@ -1,0 +1,22 @@
+{
+  "name": "Blockchain and Permanent Storage",
+  "description": "An article about blockchain technology and permanent storage solutions",
+  "author": "CrawlRegistry Team",
+  "created_at": "2023-07-19T15:00:00Z",
+  "tags": ["blockchain", "storage", "irys", "nft", "web3"],
+  "content_summary": "This article discusses how blockchain technology and permanent storage solutions like Irys can be combined to create powerful systems for preserving digital content.",
+  "attributes": [
+    {
+      "trait_type": "Category",
+      "value": "Technology"
+    },
+    {
+      "trait_type": "Reading Time",
+      "value": "3 minutes"
+    },
+    {
+      "trait_type": "Content Type",
+      "value": "Article"
+    }
+  ]
+} 

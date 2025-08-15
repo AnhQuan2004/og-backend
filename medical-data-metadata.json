@@ -1,0 +1,21 @@
+{
+  "name": "Synthetic Medical Transcription Dataset",
+  "description": "A dataset of synthetic medical transcriptions generated from an original patient note. This dataset is intended for NLP model training and research.",
+  "author": "AI Data Generation Service",
+  "created_at": "2025-07-20T04:49:00Z",
+  "tags": ["medical", "synthetic-data", "nlp", "healthcare", "dataset"],
+  "attributes": [
+    {
+      "trait_type": "Data Type",
+      "value": "JSON"
+    },
+    {
+      "trait_type": "Number of Records",
+      "value": 3
+    },
+    {
+      "trait_type": "Medical Specialty",
+      "value": "Internal Medicine, Emergency Medicine"
+    }
+  ]
+}
