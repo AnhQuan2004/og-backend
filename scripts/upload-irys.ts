@@ -19,31 +19,19 @@ async function getIrys() {
   return uploader;
 }
 
-async function uploadFile(
-  filePath: string,
+export async function uploadFromData(
+  data: Buffer | Uint8Array | string,
   tags: Array<{ name: string; value: string }> = []
 ) {
   try {
     const uploader = await getIrys();
 
-    // Check if the file exists
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`);
-    }
-
-    // Get file data
-    const fileData = fs.readFileSync(filePath);
-    const fileExtension = path.extname(filePath).substring(1);
-    const fileName = path.basename(filePath);
+    // Convert data to Buffer if it's a string or Uint8Array
+    const fileData =
+      typeof data === "string" ? Buffer.from(data) : Buffer.from(data);
 
     // Add default tags
-    const allTags = [
-      { name: "Content-Type", value: getMimeType(fileExtension) },
-      { name: "App-Name", value: "CrawlRegistry" },
-      { name: "File-Name", value: fileName },
-      { name: "Timestamp", value: Date.now().toString() },
-      ...tags,
-    ];
+    const allTags = [...tags];
 
     // Get the cost to upload
     const price = await uploader.getPrice(fileData.length);
@@ -51,28 +39,24 @@ async function uploadFile(
 
     // Fund the upload if needed
     const balance = await uploader.getLoadedBalance();
-    if (balance < price) {
-      console.log("Funding upload...");
-      const fundTx = await uploader.fund(price);
-      console.log(`Funding successful: ${fundTx.id}`);
-    }
+    console.log(
+      `Current balance: ${ethers.formatEther(balance.toString())} ETH`
+    );
 
-    // Upload the file
-    console.log(`Uploading file: ${fileName}`);
+    // Upload the data
+    console.log(`Uploading data...`);
+    console.log("Tag", allTags);
     const receipt = await uploader.upload(fileData, {
       tags: allTags,
     });
 
-    console.log(`File uploaded successfully!`);
+    console.log(`Data uploaded successfully!`);
     console.log(`Transaction ID: ${receipt.id}`);
     console.log(`URL: https://gateway.irys.xyz/${receipt.id}`);
 
-    return {
-      id: receipt.id,
-      url: `https://gateway.irys.xyz/${receipt.id}`,
-    };
+    return `https://gateway.irys.xyz/${receipt.id}`;
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error("Error uploading data:", error);
     throw error;
   }
 }
@@ -183,7 +167,7 @@ async function main() {
       return { name, value };
     });
 
-    await uploadFile(filePath, tags);
+    await uploadFromData("{filePath}", tags);
   } else if (command === "metadata") {
     const jsonFilePath = args[1];
     if (!jsonFilePath) {
@@ -194,22 +178,20 @@ async function main() {
     // Read and parse the JSON file
     const metadata = JSON.parse(fs.readFileSync(jsonFilePath, "utf8"));
 
-    // Parse tags from arguments
-    const tags = args.slice(2).map((tagArg) => {
-      const [name, value] = tagArg.split(":", 2);
-      return { name, value };
-    });
-
-    await uploadMetadata(metadata, tags);
+    await uploadMetadata(metadata, [
+      { name: "Content-Type", value: "application/json" },
+      { name: "App-Name", value: "SagaSynth" },
+      { name: "Type", value: "Dataset" },
+    ]);
   } else {
     console.error(`Unknown command: ${command}`);
   }
 }
 
-// Run the script
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+// // Run the script
+// main()
+//   .then(() => process.exit(0))
+//   .catch((error) => {
+//     console.error(error);
+//     process.exit(1);
+//   });

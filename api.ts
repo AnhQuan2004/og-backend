@@ -8,7 +8,7 @@ import path from "path";
 import axios from "axios";
 import { ethers } from "ethers";
 import { getAllBounties } from "./scripts/get-all-bounties";
-
+import { uploadFromData } from "./scripts/upload-irys";
 // Explicitly load the .env file from the same directory as api.ts
 config({ path: path.resolve(__dirname, ".env") });
 
@@ -31,54 +31,9 @@ const getIrys = async () => {
   return irys;
 };
 
-const uploadToIrys = async (
-  data: any,
-  tags: { name: string; value: string }[]
-) => {
-  const irys = await getIrys();
-  const dataToUpload = JSON.stringify(data);
-  try {
-    console.log(`Data size: ${Buffer.byteLength(dataToUpload)} bytes`);
-
-    const price = await irys.getPrice(Buffer.byteLength(dataToUpload));
-    console.log(`Upload price: ${price} wei`);
-
-    // Check balance before funding
-    const balance = await irys.getLoadedBalance();
-    console.log(`Current balance: ${balance} wei`);
-
-    if (balance.lt(price)) {
-      console.log(`Funding required: ${price.toString()} wei`);
-      await irys.fund(price);
-    } else {
-      console.log("Sufficient balance, skipping funding");
-    }
-
-    const receipt = await irys.upload(dataToUpload, { tags });
-    console.log(
-      `Data uploaded successfully. https://gateway.irys.xyz/${receipt.id}`
-    );
-    return `https://gateway.irys.xyz/${receipt.id}`;
-  } catch (e) {
-    console.log("Error uploading data ", e);
-    throw new Error(`Irys upload failed: ${(e as Error).message}`);
-  }
-};
-// --- End Irys Helper ---
-
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" })); // Adjust as needed
-
-// Debug Google API Key
-if (!process.env.GOOGLE_API_KEY) {
-  console.error("⚠️  GOOGLE_API_KEY is not set in .env file");
-} else {
-  console.log(
-    "✅ Google API Key found:",
-    process.env.GOOGLE_API_KEY.substring(0, 10) + "..."
-  );
-}
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Use stable version
@@ -251,7 +206,9 @@ app.post("/api/generate", async (req: Request, res: Response) => {
 
     // Upload to Irys
     console.log("Uploading generated data to Irys...");
-    const contentUrl = await uploadToIrys(synthetic, [
+    const dataString = JSON.stringify(synthetic);
+
+    const contentUrl = await uploadFromData(dataString, [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "SagaSynth" },
       { name: "Type", value: "Dataset" },
@@ -275,7 +232,7 @@ app.post("/api/generate", async (req: Request, res: Response) => {
     };
 
     console.log("Uploading metadata to Irys...");
-    const metadataUrl = await uploadToIrys(metadata, [
+    const metadataUrl = await uploadFromData(JSON.stringify(metadata), [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "SagaSynth" },
       { name: "Type", value: "Metadata" },
@@ -396,7 +353,7 @@ app.post("/api/generate/test", async (req: Request, res: Response) => {
 
     // --- Irys Upload Logic ---
     console.log("Uploading generated data to Irys...");
-    const contentUrl = await uploadToIrys(synthetic, [
+    const contentUrl = await uploadFromData(JSON.stringify(synthetic), [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "Saga-AI-Generator" },
     ]);
@@ -410,7 +367,7 @@ app.post("/api/generate/test", async (req: Request, res: Response) => {
     };
 
     console.log("Uploading metadata to Irys...");
-    const metadataUrl = await uploadToIrys(metadata, [
+    const metadataUrl = await uploadFromData(JSON.stringify(metadata), [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "Saga-AI-Generator-Metadata" },
     ]);
@@ -530,7 +487,7 @@ app.post("/api/dataset/upload", async (req: Request, res: Response) => {
       { name: "Type", value: "Dataset" },
     ];
 
-    const dataUrl = await uploadToIrys(data, dataTags);
+    const dataUrl = await uploadFromData(JSON.stringify(data), dataTags);
 
     // Create content hash
     const crypto = await import("crypto");
@@ -553,7 +510,10 @@ app.post("/api/dataset/upload", async (req: Request, res: Response) => {
       { name: "Type", value: "Metadata" },
     ];
 
-    const metadataUrl = await uploadToIrys(metadataWithLinks, metadataTags);
+    const metadataUrl = await uploadFromData(
+      JSON.stringify(metadataWithLinks),
+      metadataTags
+    );
 
     // Auto mint NFT after upload (temporarily disabled for testing)
     console.log("Skipping NFT minting for testing...");
@@ -1057,7 +1017,7 @@ app.post("/api/generate-and-mint", async (req: Request, res: Response) => {
 
     // Step 2: Upload to Irys
     console.log("Uploading to Irys...");
-    const contentUrl = await uploadToIrys(synthetic, [
+    const contentUrl = await uploadFromData(JSON.stringify(synthetic), [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "SagaSynth" },
       { name: "Type", value: "Dataset" },
@@ -1089,7 +1049,7 @@ app.post("/api/generate-and-mint", async (req: Request, res: Response) => {
       ai_model: ai_model,
     };
 
-    const metadataUrl = await uploadToIrys(metadata, [
+    const metadataUrl = await uploadFromData(JSON.stringify(metadata), [
       { name: "Content-Type", value: "application/json" },
       { name: "App-Name", value: "SagaSynth" },
       { name: "Type", value: "Metadata" },
@@ -1194,12 +1154,12 @@ app.get("/api/metadata/all", async (req: Request, res: Response) => {
     console.log("Fetching all metadata from contract...");
     const { contract } = await getContract();
     const allMetadata: any[] = [];
-    console.log(contract);
     // Since we don't have totalSupply(), we'll try tokens starting from 1 until we get errors
     let tokenId = 1;
     let totalTokensChecked = 0;
 
     while (true) {
+      console.log(`Checking token ID: ${tokenId}`);
       try {
         // Check if token exists by trying to get its owner
         const owner = await contract.ownerOf(tokenId);
@@ -1208,7 +1168,7 @@ app.get("/api/metadata/all", async (req: Request, res: Response) => {
         }
 
         const metadata = await contract.getMetadata(tokenId);
-        console.log(metadata);
+        console.log(`Found metadata for token ${tokenId}:`, metadata);
         const tokenURI = await contract.tokenURI(tokenId);
         // Fetch additional metadata from tokenURI
         // Only include tokens with complete metadata (name and description)
